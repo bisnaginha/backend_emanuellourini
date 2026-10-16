@@ -9,5 +9,4 @@ db.exec(`
         duracao INTEGER NOT NULL
     )
 `);
-
 module.exports = db;
