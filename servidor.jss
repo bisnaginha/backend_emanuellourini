@@ -1,19 +1,23 @@
-const { randomUUID } = require('node:crypto');
+const express = require('express');
+const treinosController = require('./controllers/treinosController.js');
+const authController = require('./controllers/authController.js');
 
-const sessoes = new Map(); // Mapeamento: token -> usuarioId
+const app = express();
+app.use(express.json());
 
-function criar(usuarioId) {
-  const token = randomUUID();
-  sessoes.set(token, usuarioId);
-  return token;
-}
+// Rotas de treinos
+app.get('/treinos', treinosController.listar);
+app.get('/treinos/:id', treinosController.buscarUm);
+app.post('/treinos', treinosController.criar);
+app.put('/treinos/:id', treinosController.atualizar);
+app.delete('/treinos/:id', treinosController.remover);
 
-function usuarioIdDaSessao(token) {
-  return sessoes.get(token);
-}
+// Rotas de autenticação
+app.post('/login', authController.login);
+app.get('/perfil', authController.perfil);
+app.post('/logout', authController.logout);
 
-function encerrar(token) {
-  sessoes.delete(token);
-}
-
-module.exports = { criar, usuarioIdDaSessao, encerrar };
+const PORTA = 3000;
+app.listen(PORTA, () => {
+  console.log(`Servidor rodando em http://localhost:${PORTA}`);
+});
